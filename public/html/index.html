@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scrape</title>
+  </head>
+  <body>
+    <h1>Scrape Ekşi</h1>
+
+    <div>
+      <div>
+        <label for="url">URL</label>
+        <input id="url" type="text" placeholder="URL Address" />
+      </div>
+
+      <div>
+        <label for="url">PAGE</label>
+        <input type="number" id="page" value="1" min="0" />
+      </div>
+
+      <div>
+        <button id="do">DO IT</button>
+      </div>
+
+      <div id="loading"></div>
+    </div>
+
+    <script>
+      const btn = document.getElementById("do");
+      const loading = document.getElementById("loading");
+
+      btn.addEventListener("click", function (e) {
+        const urlInp = document.getElementById("url");
+        const page = document.getElementById("page");
+
+        let url = urlInp.value.replace("https://eksisozluk.com/", "");
+
+        const loadDiv = document.createElement("div");
+
+        loadDiv.textContent = `${url} is getting scrapped.`;
+
+        loading.appendChild(loadDiv);
+
+        fetch("http://localhost:3000/" + url + "&p=" + page.value)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+
+            return response.text();
+          })
+          .then((data) => {
+            console.log(data);
+
+            loadDiv.textContent = `${url} was scrapped.`;
+
+            console.log("Success:", data);
+          })
+          .catch((error) => {
+            loadDiv.textContent = `${url} couldn't get scrapped cause page not found or you got banned.`;
+
+            console.error("Error:", error);
+          })
+          .finally(() => {
+            setTimeout(() => {
+              loadDiv.remove();
+            }, 4000);
+          });
+      });
+    </script>
+  </body>
+</html>
